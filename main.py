@@ -14,11 +14,11 @@ thumb_Coord = (4, 2)
 
 
  # Получить информацию о размере кадра с помощью метода get()
-#frame_width = 640
-#frame_height = 480
-#frame_size = (frame_width,frame_height)
+frame_width = 640
+frame_height = 480
+frame_size = (frame_width,frame_height)
 # Инициализировать объект записи видео
-#output = cv2.VideoWriter('output_video_from_file.avi', cv2.VideoWriter_fourcc('M','J','P','G'), 20, frame_size)
+output = cv2.VideoWriter('output_video_from_file.mp4', cv2.VideoWriter_fourcc(* 'XVID'), 30, frame_size)
 
 while cap.isOpened(): 
     success, image = cap.read()
@@ -27,7 +27,8 @@ while cap.isOpened():
         continue
     
     image = cv2.flip(image, 1)
-   
+    img2 = image.copy()
+    img2[:,:] = [0,0,0]
 
     RGB_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     result = hands.process(RGB_image)
@@ -37,13 +38,12 @@ while cap.isOpened():
             lbl = result.multi_handedness[idx].classification[0].label
             print(lbl)
         for handLms in multiLandMarks:
-            #img2 = image.copy()
-            #img2[:,:] = [0,0,0]
-            #output.write(img2)
-            #mpDraw.draw_landmarks(img2, handLms, mp_Hands.HAND_CONNECTIONS)
-            #cv2.imwrite('img.jpg', img2)
             mpDraw.draw_landmarks(image, handLms, mp_Hands.HAND_CONNECTIONS)
-
+            mpDraw.draw_landmarks(img2, handLms, mp_Hands.HAND_CONNECTIONS)
+    
+    
+    output.write(img2)
+    #cv2.imshow('img.jpg', img2)
     cv2.imshow('image', image)
     if cv2.waitKey(1) & 0xFF == 27:
         break
